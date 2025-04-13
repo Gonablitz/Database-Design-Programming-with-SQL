@@ -111,15 +111,12 @@ CREATE TABLE order_history (
 );
 
 
--- Insert data into address_status
 INSERT INTO address_status (status_name) VALUES 
 ('Active'), ('Inactive'), ('Primary'), ('Secondary');
 
--- Insert data into country
 INSERT INTO country (country_name) VALUES 
 ('United States'), ('United Kingdom'), ('Canada'), ('Australia'), ('Germany');
 
--- Insert data into address
 INSERT INTO address (street, city, postal_code, country_id, status_id) VALUES
 ('123 Main St', 'New York', '10001', 1, 1),
 ('456 Oak Ave', 'Chicago', '60601', 1, 3),
@@ -127,36 +124,29 @@ INSERT INTO address (street, city, postal_code, country_id, status_id) VALUES
 ('10 Downing St', 'London', 'SW1A 2AA', 2, 3),
 ('20 Queen St', 'Toronto', 'M5H 2N8', 3, 1);
 
--- Insert data into customer
 INSERT INTO customer (first_name, last_name, email) VALUES
 ('John', 'Smith', 'john.smith@email.com'),
 ('Emily', 'Johnson', 'emily.j@email.com'),
 ('Michael', 'Williams', 'michael.w@email.com'),
 ('Sarah', 'Brown', 'sarah.b@email.com');
 
--- Insert data into customer_address
 INSERT INTO customer_address (customer_id, address_id) VALUES
 (1, 1), (1, 2), (2, 3), (3, 4), (4, 5);
 
--- Insert data into order_status
 INSERT INTO order_status (status_name) VALUES
 ('Processing'), ('Shipped'), ('Delivered'), ('Cancelled'), ('Returned');
 
--- Insert data into shipping_method
 INSERT INTO shipping_method (method_name, cost) VALUES
 ('Standard Shipping', 4.99),
 ('Express Shipping', 9.99),
 ('Overnight Shipping', 19.99);
 
--- Insert data into publisher
 INSERT INTO publisher (publisher_name) VALUES
 ('Bloomsbury'), ('Penguin Books'), ('HarperCollins'), ('Doubleday');
 
--- Insert data into book_language
 INSERT INTO book_language (language_name) VALUES
 ('English'), ('Spanish'), ('French'), ('German'), ('Japanese');
 
--- Insert data into author
 INSERT INTO author (first_name, last_name, bio) VALUES
 ('J.K.', 'Rowling', 'British author best known for the Harry Potter series'),
 ('George', 'Orwell', 'English novelist known for dystopian works'),
@@ -164,7 +154,6 @@ INSERT INTO author (first_name, last_name, bio) VALUES
 ('Stephen', 'King', 'American author of horror and supernatural fiction'),
 ('Haruki', 'Murakami', 'Japanese writer known for surrealistic fiction');
 
--- Insert data into book
 INSERT INTO book (title, isbn, publication_year, publisher_id, language_id, price, stock_quantity) VALUES
 ('Harry Potter and the Philosopher''s Stone', '9780747532743', 1997, 1, 1, 10.99, 50),
 ('1984', '9780451524935', 1949, 2, 1, 7.99, 100),
@@ -172,11 +161,9 @@ INSERT INTO book (title, isbn, publication_year, publisher_id, language_id, pric
 ('The Shining', '9780307743657', 1977, 4, 1, 12.99, 60),
 ('Norwegian Wood', '9780099448822', 1987, 2, 5, 9.99, 40);
 
--- Insert data into book_author
 INSERT INTO book_author (book_id, author_id) VALUES
 (1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
 
--- Insert data into cust_order
 INSERT INTO cust_order (customer_id, order_date, status_id, method_id) VALUES
 (1, '2023-01-15', 3, 1),
 (2, '2023-02-20', 3, 2),
@@ -184,7 +171,6 @@ INSERT INTO cust_order (customer_id, order_date, status_id, method_id) VALUES
 (4, '2023-04-05', 1, 3),
 (1, '2023-05-12', 2, 2);
 
--- Insert data into order_line
 INSERT INTO order_line (order_id, book_id, quantity) VALUES
 (1, 1, 1), (1, 2, 1), (1, 3, 1),
 (2, 2, 2),
@@ -192,7 +178,6 @@ INSERT INTO order_line (order_id, book_id, quantity) VALUES
 (4, 1, 3),
 (5, 5, 1);
 
--- Insert data into order_history
 INSERT INTO order_history (order_id, status_id, updated_at) VALUES
 (1, 1, '2023-01-15 10:30:00'),
 (1, 2, '2023-01-16 09:15:00'),
@@ -206,7 +191,7 @@ INSERT INTO order_history (order_id, status_id, updated_at) VALUES
 (5, 1, '2023-05-12 09:45:00'),
 (5, 2, '2023-05-13 11:30:00');
 
-
+-- data integrity verification
 -- Check for books without authors
 SELECT b.book_id, b.title
 FROM book b
@@ -225,8 +210,8 @@ FROM customer c
 LEFT JOIN customer_address ca ON c.customer_id = ca.customer_id
 WHERE ca.address_id IS NULL;
 
--- retrieve all books withtheir authors,publishers and languages
-
+-- for analytical purposes
+-- books with authors,publishers and languages
 SELECT 
     b.book_id,
     b.title,
@@ -250,9 +235,7 @@ JOIN
 ORDER BY 
     b.title;
     
-    
--- retrieve customers order history
-
+-- customers order history with address
 SELECT 
     c.customer_id,
     CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
@@ -292,9 +275,7 @@ WHERE
 ORDER BY 
     o.order_date DESC;
     
-    
--- show top selling books nd sales according to languages
-
+-- show top selling books and sales by lang
 -- Top-selling books by quantity
 SELECT 
     b.book_id,
@@ -334,8 +315,7 @@ GROUP BY
 ORDER BY 
     total_revenue DESC;
     
--- show order status history with estimated delivery dates
-
+-- order status history with est delivery dates
 SELECT 
     o.order_id,
     CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
@@ -358,9 +338,8 @@ JOIN
     order_status os ON oh.status_id = os.status_id
 ORDER BY 
     o.order_id, oh.updated_at;
-    
--- analyze shippinf]g methods and status
 
+-- analyze order by shipping details
 SELECT 
     sm.method_name AS shipping_method,
     COUNT(o.order_id) AS total_orders,
@@ -380,5 +359,4 @@ GROUP BY
     sm.method_name
 ORDER BY 
     total_orders DESC;
-    
     
